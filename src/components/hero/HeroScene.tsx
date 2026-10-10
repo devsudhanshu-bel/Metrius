@@ -1,98 +1,49 @@
-
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import Script from "next/script";
 
-const SPLINE_URL =
-  "https://my.spline.design/thestrangeworld-vjeHpdxRcK3lFJCgJ8fDkXTS/";
+const SCENE_URL =
+  "https://prod.spline.design/Lw-sYu2HOmivJhHf/scene.splinecode";
 
 export default function HeroScene() {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
-  const [active, setActive] = useState(false);
+  const sceneRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
+    const scene = sceneRef.current;
+    if (!scene) return;
 
-    let intersecting = false;
-    let tabVisible = !document.hidden;
-    let disposed = false;
-    let delayTimer: ReturnType<typeof setTimeout> | undefined;
-    let readyToLoad = false;
-
-    const sync = () => {
-      if (!disposed) {
-        setActive(
-          readyToLoad && intersecting && tabVisible
-        );
-      }
+    const handleLoad = () => {
+      scene.dataset.loaded = "true";
     };
 
-    // Give the main page a head start before loading the 3D scene.
-    delayTimer = setTimeout(() => {
-      readyToLoad = true;
-      setReady(true);
-      sync();
-    }, 700);
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        intersecting = entry.isIntersecting;
-        sync();
-      },
-      {
-        threshold: 0,
-        rootMargin: "100px",
-      }
-    );
-
-    observer.observe(host);
-
-    const onVisibilityChange = () => {
-      tabVisible = !document.hidden;
-      sync();
-    };
-
-    document.addEventListener(
-      "visibilitychange",
-      onVisibilityChange
-    );
+    scene.addEventListener("load-complete", handleLoad);
 
     return () => {
-      disposed = true;
-      if (delayTimer) clearTimeout(delayTimer);
-      observer.disconnect();
-      document.removeEventListener(
-        "visibilitychange",
-        onVisibilityChange
-      );
+      scene.removeEventListener("load-complete", handleLoad);
     };
   }, []);
 
   return (
-    <div
-      ref={hostRef}
-      className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden bg-black"
-      aria-hidden="true"
-    >
-      {/* Lightweight fallback while the scene is unloaded */}
-      <div
-        className="absolute inset-0 bg-black"
-        aria-hidden="true"
+    <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden bg-black">
+      <Script
+        type="module"
+        src="https://cdn.spline.design/@splinetool/viewer@2.0.75/build/spline-viewer.js"
+        strategy="afterInteractive"
       />
 
-      {ready && active && (
-        <iframe
-          key="metrius-spline-scene"
-          src={SPLINE_URL}
-          title="METRIUS — The Strange World"
-          className="absolute inset-0 h-full w-full border-0"
-          allow="fullscreen"
-          loading="eager"
-          tabIndex={-1}
-        />
-      )}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#191919_0%,#080808_55%,#000_100%)]"
+      />
+
+      <spline-viewer
+        ref={sceneRef as React.RefObject<HTMLElement>}
+        url={SCENE_URL}
+        loading="lazy"
+        unloadable
+        className="absolute inset-0 block h-full w-full"
+      />
     </div>
   );
 }

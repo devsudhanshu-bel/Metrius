@@ -6,6 +6,180 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const navigationGroups = [
+  [
+    {  label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Use", href: "/terms-and-conditions" },
+    { label: "Shipping Policy", href: "/shipping-and-policy" },
+  ],
+  [
+    { label: "Contact Us", href: "/contact" },
+    { label: "Instagram", href: "https://www.instagram.com/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/" },
+  ],
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Use", href: "/terms-and-conditions" },
+];
+
+function LaboratoryIllustration() {
+  const illustrationRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const root = illustrationRef.current;
+    if (!root) return;
+
+    const ctx = gsap.context(() => {
+      const wave = root.querySelector(".liquid-wave");
+      const fill = root.querySelector(".liquid-fill");
+      const svg = root.querySelector("svg");
+
+      const animation = gsap.timeline({ paused: true, repeat: -1 });
+
+      animation
+        .to(
+          wave,
+          {
+            x: -2,
+            y: -2,
+            duration: 0.9,
+            ease: "sine.inOut",
+          },
+          0
+        )
+        .to(
+          wave,
+          {
+            x: 2,
+            y: 1,
+            duration: 0.9,
+            ease: "sine.inOut",
+          },
+          0.9
+        )
+        .to(
+          fill,
+          {
+            y: -3,
+            duration: 0.9,
+            ease: "sine.inOut",
+          },
+          0
+        )
+        .to(
+          fill,
+          {
+            y: 0,
+            duration: 0.9,
+            ease: "sine.inOut",
+          },
+          0.9
+        );
+
+      const startAnimation = () => animation.play();
+      const stopAnimation = () => animation.pause(0);
+
+      svg?.addEventListener("mouseenter", startAnimation);
+      svg?.addEventListener("mouseleave", stopAnimation);
+      svg?.addEventListener("focusin", startAnimation);
+      svg?.addEventListener("focusout", stopAnimation);
+
+      return () => {
+        svg?.removeEventListener("mouseenter", startAnimation);
+        svg?.removeEventListener("mouseleave", stopAnimation);
+        svg?.removeEventListener("focusin", startAnimation);
+        svg?.removeEventListener("focusout", stopAnimation);
+        animation.kill();
+      };
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div
+      ref={illustrationRef}
+      className="metrius-lab relative flex h-40 w-full items-center justify-center overflow-hidden border-t border-white/[0.07] sm:h-48 lg:h-full lg:min-h-[220px] lg:border-l lg:border-t-0"
+      aria-label="Decorative laboratory glassware illustration"
+      role="img"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
+      />
+
+      <svg
+        viewBox="0 0 400 120"
+        className="relative z-10 h-auto w-full max-w-[580px] overflow-visible px-3 text-white opacity-25"
+        preserveAspectRatio="xMidYMid meet"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        aria-hidden="true"
+      >
+        <defs>
+          <clipPath id="metrius-dropper-clip">
+            <path d="M215 35 Q215 30 220 30 L240 30 Q245 30 245 35 L245 80 Q245 90 230 90 Q215 90 215 80 Z" />
+          </clipPath>
+        </defs>
+
+        {/* Glass tube */}
+        <path d="M30 100 L40 30 L80 30 L90 100 Z" />
+        <rect x="40" y="20" width="40" height="10" />
+
+        {/* Tall glass vessel */}
+        <path d="M110 100 L120 18 L160 18 L170 100 Z" />
+        <rect x="120" y="10" width="40" height="8" />
+
+        {/* Dropper cap */}
+        <path d="M225 0 L225 10 L220 10 L220 30 L240 30 L240 10 L235 10 L235 0 Z" />
+
+        {/* Dropper body */}
+        <path d="M215 35 Q215 30 220 30 L240 30 Q245 30 245 35 L245 80 Q245 90 230 90 Q215 90 215 80 Z" />
+
+        {/* Liquid */}
+        <g clipPath="url(#metrius-dropper-clip)">
+          <rect
+            className="liquid-fill"
+            x="215"
+            y="62"
+            width="30"
+            height="30"
+            fill="#8c735e"
+            fillOpacity="0.7"
+            stroke="none"
+          />
+
+          <path
+            className="liquid-wave"
+            d="M215 62 Q223 57 230 60 Q238 63 245 58 L245 92 L215 92 Z"
+            fill="#8c735e"
+            fillOpacity="0.9"
+            stroke="none"
+          />
+        </g>
+
+        {/* Third vessel */}
+        <path d="M275 100 L285 28 L325 28 L335 100 Z" />
+        <rect x="285" y="18" width="40" height="10" />
+
+        {/* Small dropper */}
+        <g transform="translate(345 22)">
+          <rect x="25" y="0" width="10" height="18" />
+          <path d="M15 25 Q15 20 20 20 L40 20 Q45 20 45 25 L45 70 Q45 80 30 80 Q15 80 15 70 Z" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export default function Footer() {
   const footerRef = useRef(null);
 
@@ -13,196 +187,127 @@ export default function Footer() {
     const footer = footerRef.current;
     if (!footer) return;
 
-    let refreshFrame = 0;
-
     const ctx = gsap.context(() => {
       const select = (selector) => footer.querySelectorAll(selector);
 
-      const giant = select(".footer-giant");
-      const kickers = select(".footer-kicker");
-      const headingLines = select(".footer-heading-line");
-      const copy = select(".footer-copy");
-      const meta = select(".footer-meta");
-      const line = select(".footer-line");
+      gsap.set(select(".footer-reveal"), {
+        autoAlpha: 0,
+        y: 12,
+      });
 
-      gsap.set(kickers, { autoAlpha: 0, y: 20 });
-      gsap.set(headingLines, { yPercent: 110 });
-      gsap.set(copy, { autoAlpha: 0, y: 25 });
-      gsap.set(meta, { autoAlpha: 0, y: 15 });
-      gsap.set(giant, { autoAlpha: 0, scale: 0.85 });
+      gsap.set(select(".footer-wordmark"), {
+        autoAlpha: 0,
+        y: 15,
+      });
 
       const reveal = gsap.timeline({
         scrollTrigger: {
           trigger: footer,
-          start: "top 80%",
-          end: "center 40%",
-          scrub: 1,
-          invalidateOnRefresh: true,
+          start: "top 95%",
+          toggleActions: "play none none reverse",
         },
       });
 
       reveal
-        .to(giant, {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 1.4,
-          ease: "power3.out",
-        }, 0)
-        .to(kickers, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.08,
-          ease: "power3.out",
-        }, 0.15)
-        .to(headingLines, {
-          yPercent: 0,
-          duration: 0.9,
-          stagger: 0.12,
-          ease: "power4.out",
-        }, 0.25)
-        .to(copy, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power3.out",
-        }, 0.65)
-        .to(meta, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: "power3.out",
-        }, 0.8);
-
-      if (giant.length) {
-        gsap.to(giant, {
-          y: -100,
-          x: 40,
-          ease: "none",
-          scrollTrigger: {
-            trigger: footer,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 2,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
-
-      if (line.length) {
-        gsap.fromTo(
-          line,
-          { scaleX: 0, transformOrigin: "left center" },
+        .to(
+          select(".footer-wordmark"),
           {
-            scaleX: 1,
-            ease: "power3.inOut",
-            scrollTrigger: {
-              trigger: footer,
-              start: "top 70%",
-              end: "top 35%",
-              scrub: 1,
-              invalidateOnRefresh: true,
-            },
-          }
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+          },
+          0
+        )
+        .to(
+          select(".footer-reveal"),
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: "power2.out",
+          },
+          0.12
         );
-      }
-
-      refreshFrame = requestAnimationFrame(() => {
-        ScrollTrigger.refresh();
-      });
     }, footer);
 
-    return () => {
-      cancelAnimationFrame(refreshFrame);
-      ctx.revert();
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
     <footer
       ref={footerRef}
-      className="metrius-footer relative min-h-[85vh] w-full overflow-hidden bg-[#030303] text-white"
+      className="metrius-footer relative overflow-hidden border-t border-white/[0.08] bg-[#050505] pt-12 text-white md:pt-16"
     >
+      {/* Oversized brand wordmark */}
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-[-10%] opacity-[0.025]"
+        className="footer-wordmark mb-10 w-full overflow-hidden px-2 text-center sm:mb-14 md:mb-16"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "100px 100px",
+          maskImage:
+            "linear-gradient(180deg, transparent 0%, black 18%, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(180deg, transparent 0%, black 18%, black 70%, transparent 100%)",
         }}
-      />
-
-      <div
-        aria-hidden="true"
-        className="footer-giant pointer-events-none absolute bottom-[-12vw] left-[-4vw] select-none whitespace-nowrap text-[29vw] font-light leading-none tracking-[-0.11em] text-white/[0.025] will-change-transform"
       >
-        METRIUS
+        <h2
+          aria-label="METRIUS"
+          className="select-none whitespace-nowrap text-[23vw] font-bold leading-[0.8] tracking-[-0.09em] text-[#141414] mix-blend-screen sm:text-[22vw]"
+        >
+          METRIUS
+        </h2>
       </div>
 
-      <div className="relative z-10 flex min-h-[85vh] flex-col justify-between px-[5vw] py-10">
-        <div className="flex items-center justify-between border-b border-white/10 pb-5">
-          <span className="footer-kicker text-[9px] uppercase tracking-[0.3em] text-white/35">
-            METRIUS
-          </span>
-          <span className="footer-kicker text-[9px] uppercase tracking-[0.3em] text-white/35">
-            DIGITAL SYSTEMS
-          </span>
-        </div>
+      {/* Navigation and illustration */}
+      <div className="grid grid-cols-1 border-t border-white/[0.07] lg:grid-cols-2">
+        <nav
+          aria-label="Footer navigation"
+          className="grid grid-cols-2 gap-8 border-b border-white/[0.07] p-7 sm:gap-12 sm:p-10 md:p-14 lg:border-b-0 lg:border-r"
+        >
+          {navigationGroups.map((group, index) => (
+            <div key={index} className="flex flex-col items-start gap-6">
+              {group.map((link) => {
+                const external = link.href.startsWith("https://");
 
-        <div className="py-24">
-          <div className="footer-kicker mb-8 text-[10px] uppercase tracking-[0.3em] text-white/30">
-            AI / SOFTWARE / SYSTEMS
-          </div>
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/40 transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:text-white sm:text-xs"
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
 
-          <h2 className="max-w-[1200px] overflow-hidden text-[clamp(4rem,9vw,10rem)] font-light uppercase leading-[0.8] tracking-[-0.08em]">
-            <span className="footer-heading-line block">BUILDING</span>
-            <span className="footer-heading-line block text-white/40">
-              DIGITAL
-            </span>
-            <span className="footer-heading-line block">SYSTEMS.</span>
-          </h2>
+        <LaboratoryIllustration />
+      </div>
 
-          <p className="footer-copy mt-12 max-w-[520px] text-[14px] leading-[1.8] text-white/35 md:text-[16px]">
-            Premium digital products, intelligent software and systems
-            designed to move businesses forward.
-          </p>
-        </div>
+      {/* Copyright and legal links */}
+      <div className="flex flex-col items-start justify-between gap-5 border-t border-white/[0.07] px-7 py-6 text-[9px] font-medium tracking-[0.08em] text-white/35 sm:flex-row sm:items-center sm:px-10 md:px-14">
+        <span>
+          © {new Date().getFullYear()} METRIUS. ALL RIGHTS RESERVED.
+        </span>
 
-        <div className="footer-line h-px w-full bg-white/15" />
-
-        <div className="mt-7 grid grid-cols-1 gap-7 text-[9px] uppercase tracking-[0.25em] text-white/30 md:grid-cols-4 md:items-end">
-          <div className="footer-meta">
-            <span className="block text-white/20">COMPANY</span>
-            <span className="mt-2 block">METRIUS</span>
-          </div>
-
-          <div className="footer-meta">
-            <span className="block text-white/20">DISCIPLINES</span>
-            <span className="mt-2 block">AI / SOFTWARE / SYSTEMS</span>
-          </div>
-
-          <div className="footer-meta">
-            <span className="block text-white/20">CONTACT</span>
+        <nav
+          aria-label="Legal navigation"
+          className="flex flex-wrap gap-x-5 gap-y-3 sm:gap-x-7"
+        >
+          {legalLinks.map((link) => (
             <a
-              href="mailto:hello@metrius.com"
-              className="mt-2 block transition-colors duration-300 hover:text-white"
+              key={link.href}
+              href={link.href}
+              className="transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:text-white"
             >
-              HELLO@METRIUS.COM
+              {link.label}
             </a>
-          </div>
-
-          <div className="footer-meta md:text-right">
-            <span className="block text-white/20">END</span>
-            <span className="mt-2 block text-white/60">04 / 04</span>
-          </div>
-        </div>
-
-        <div className="footer-meta mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-[8px] uppercase tracking-[0.25em] text-white/20 md:flex-row md:items-center md:justify-between">
-          <span>© 2026 METRIUS. ALL RIGHTS RESERVED.</span>
-          <span>BUILD THINGS THAT MATTER.</span>
-        </div>
+          ))}
+        </nav>
       </div>
     </footer>
   );

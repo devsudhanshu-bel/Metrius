@@ -1,15 +1,15 @@
-
-import type * as React from "react";
+import type { DetailedHTMLProps, HTMLAttributes } from "react";
 
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "spline-viewer": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
+      "spline-viewer": DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
         HTMLElement
       > & {
         url?: string;
-        "loading-anim-type"?: string;
+        loading?: "auto" | "lazy" | "eager";
+        unloadable?: boolean;
       };
     }
   }
