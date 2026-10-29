@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   ),
 
   title: {
-    default: "METRIUS — Building Digital Products People Remember.",
+    default: "METRIUS",
     template: "%s | METRIUS",
   },
 

@@ -1,346 +1,671 @@
+
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useReducedMotion,
+} from "framer-motion";
 
-gsap.registerPlugin(ScrollTrigger);
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Asterisk,
+  Globe,
+  Mail,
+} from "lucide-react";
 
-export default function ContactSection() {
-  const sectionRef = useRef(null);
+const EASE = [0.22, 1, 0.36, 1];
 
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+const lineContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.13,
+      delayChildren: 0.1,
+    },
+  },
+};
 
-    let refreshFrame = 0;
+const lineVariant = {
+  hidden: {
+    y: 100,
+    opacity: 0,
+    filter: "blur(8px)",
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.95,
+      ease: EASE,
+    },
+  },
+};
 
-    const ctx = gsap.context(() => {
-      const select = (selector) => section.querySelectorAll(selector);
-      const kickers = select(".contact-kicker");
-      const titleLines = select(".contact-title-line");
-      const copies = select(".contact-copy");
-      const actions = select(".contact-action");
-      const metaItems = select(".contact-meta-item");
-      const lines = select(".contact-line");
-      const background = select(".contact-background-m");
-      const orbit = select(".contact-orbit");
-      const ring1 = select(".contact-orbit-ring-1");
-      const ring2 = select(".contact-orbit-ring-2");
-      const dots = select(".contact-orbit-dot");
-      const core = select(".contact-core");
+const contentVariant = {
+  hidden: {
+    y: 35,
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: EASE,
+    },
+  },
+};
 
-      gsap.set(kickers, { autoAlpha: 0, y: 25 });
-      gsap.set(titleLines, { yPercent: 115 });
-      gsap.set(copies, { autoAlpha: 0, y: 35 });
-      gsap.set(actions, { autoAlpha: 0, y: 35 });
-      gsap.set(metaItems, { autoAlpha: 0, y: 20 });
-      gsap.set(lines, { scaleX: 0, transformOrigin: "left center" });
-      gsap.set(background, { autoAlpha: 0, scale: 0.8, rotation: -8 });
-      gsap.set(orbit, { autoAlpha: 0, scale: 0.7 });
+const letterContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.035,
+      delayChildren: 0.12,
+    },
+  },
+};
 
-      const reveal = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top 70%",
-          end: "center 35%",
-          scrub: 1.2,
-          invalidateOnRefresh: true,
-        },
-      });
+const letterVariant = {
+  hidden: {
+    y: "115%",
+    rotateX: -80,
+    opacity: 0,
+    filter: "blur(8px)",
+  },
+  visible: {
+    y: "0%",
+    rotateX: 0,
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.85,
+      ease: EASE,
+    },
+  },
+};
 
-      reveal
-        .to(background, {
-          autoAlpha: 1,
-          scale: 1,
-          rotation: 0,
-          duration: 1.5,
-          ease: "power3.out",
-        }, 0)
-        .to(orbit, {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 1.3,
-          ease: "power3.out",
-        }, 0.1)
-        .to(kickers, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-        }, 0.15)
-        .to(titleLines, {
-          yPercent: 0,
-          duration: 1,
-          stagger: 0.12,
-          ease: "power4.out",
-        }, 0.25)
-        .to(copies, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-        }, 0.65)
-        .to(actions, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-        }, 0.75)
-        .to(metaItems, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.12,
-          ease: "power3.out",
-        }, 0.85)
-        .to(lines, {
-          scaleX: 1,
-          duration: 0.8,
-          ease: "power3.inOut",
-        }, 0.9);
-
-      if (background.length) {
-        gsap.to(background, {
-          y: -120,
-          x: 50,
-          rotation: 4,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 2,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
-
-      if (ring1.length) {
-        gsap.to(ring1, {
-          rotation: 360,
-          duration: 28,
-          repeat: -1,
-          ease: "none",
-        });
-      }
-
-      if (ring2.length) {
-        gsap.to(ring2, {
-          rotation: -360,
-          duration: 36,
-          repeat: -1,
-          ease: "none",
-        });
-      }
-
-      if (dots.length) {
-        gsap.to(dots, {
-          rotation: 360,
-          duration: 8,
-          repeat: -1,
-          ease: "none",
-        });
-      }
-
-      if (core.length) {
-        gsap.to(core, {
-          scale: 1.12,
-          opacity: 0.75,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      }
-
-      const cleanupListeners = [];
-
-      actions.forEach((button) => {
-        const xTo = gsap.quickTo(button, "x", {
-          duration: 0.35,
-          ease: "power3.out",
-        });
-
-        const yTo = gsap.quickTo(button, "y", {
-          duration: 0.35,
-          ease: "power3.out",
-        });
-
-        const handleMove = (event) => {
-          const rect = button.getBoundingClientRect();
-          const x = event.clientX - rect.left - rect.width / 2;
-          const y = event.clientY - rect.top - rect.height / 2;
-          xTo(x * 0.08);
-          yTo(y * 0.08);
-        };
-        
-        const handleLeave = () => {
-          xTo(0);
-          yTo(0);
-        };
-
-        button.addEventListener("mousemove", handleMove);
-        button.addEventListener("mouseleave", handleLeave);
-
-        cleanupListeners.push(() => {
-          button.removeEventListener("mousemove", handleMove);
-          button.removeEventListener("mouseleave", handleLeave);
-        });
-      });
-
-      refreshFrame = requestAnimationFrame(() => {
-        ScrollTrigger.refresh();
-      });
-
-      return () => {
-        cleanupListeners.forEach((cleanup) => cleanup());
-      };
-    }, section);
-
-    return () => {
-      cancelAnimationFrame(refreshFrame);
-      ctx.revert();
-    };
-  }, []);
+function AnimatedText({ text }) {
+  const reduceMotion = useReducedMotion();
 
   return (
-    <section
-      ref={sectionRef}
-      id="contact"
-      className="contact-section relative min-h-screen w-full overflow-hidden bg-[#050505] text-white"
+    <motion.span
+      className="inline-block"
+      variants={reduceMotion ? undefined : letterContainer}
+      initial={reduceMotion ? false : "hidden"}
+      whileInView={reduceMotion ? undefined : "visible"}
+      viewport={{ once: true, amount: 0.7 }}
+      aria-label={text}
     >
-      <div
+      {text.split("").map((char, index) => (
+        <motion.span
+          key={`${char}-${index}`}
+          className="inline-block"
+          style={{
+            whiteSpace: char === " " ? "pre" : "normal",
+            transformOrigin: "bottom center",
+          }}
+          variants={reduceMotion ? undefined : letterVariant}
+          aria-hidden="true"
+        >
+          {char === " " ? "\u00A0" : char}
+        </motion.span>
+      ))}
+    </motion.span>
+  );
+}
+
+function Reveal({ children, className = "", delay = 0 }) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={reduceMotion ? false : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={contentVariant}
+      transition={{ delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function MagneticButton({
+  children,
+  href,
+  secondary = false,
+}) {
+  const reduceMotion = useReducedMotion();
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springX = useSpring(x, {
+    stiffness: 180,
+    damping: 14,
+    mass: 0.3,
+  });
+
+  const springY = useSpring(y, {
+    stiffness: 180,
+    damping: 14,
+    mass: 0.3,
+  });
+
+  const handleMouseMove = (event) => {
+    if (reduceMotion) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const pointerX =
+      event.clientX - rect.left - rect.width / 2;
+
+    const pointerY =
+      event.clientY - rect.top - rect.height / 2;
+
+    x.set(pointerX * 0.12);
+    y.set(pointerY * 0.12);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.a
+      href={href}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={
+        reduceMotion
+          ? undefined
+          : {
+              x: springX,
+              y: springY,
+            }
+      }
+      whileHover={
+        reduceMotion ? undefined : { scale: 1.025 }
+      }
+      whileTap={
+        reduceMotion ? undefined : { scale: 0.975 }
+      }
+      className="group relative inline-flex min-h-[62px] items-center justify-between gap-8 overflow-hidden rounded-full border border-black/15 bg-transparent px-7 text-[11px] font-medium uppercase tracking-[0.14em] text-black transition-colors duration-500 hover:border-black hover:bg-black hover:text-white"
+    >
+      {/* Subtle hover shimmer */}
+      <motion.span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[-10%] opacity-[0.035]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "100px 100px",
+        className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/[0.04] to-transparent group-hover:via-white/10"
+        whileHover={{ x: "200%" }}
+        transition={{
+          duration: 0.8,
+          ease: "easeInOut",
         }}
       />
 
+      {/* Button label */}
+      <span className="relative z-10">
+        {children}
+      </span>
+
+      {/* Circular arrow — identical on both buttons */}
+      <span className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/20 transition-all duration-500 group-hover:rotate-45">
+        <ArrowUpRight
+          size={16}
+          strokeWidth={1.6}
+        />
+      </span>
+    </motion.a>
+  );
+}
+
+function SocialLink({
+  href,
+  label,
+  children,
+  index,
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.a
+      href={href}
+      aria-label={label}
+      target="_blank"
+      rel="noreferrer"
+      initial={
+        reduceMotion ? false : { opacity: 0, y: 18 }
+      }
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{
+        delay: 0.35 + index * 0.1,
+        duration: 0.65,
+        ease: EASE,
+      }}
+      whileHover={
+        reduceMotion ? undefined : { y: -4, scale: 1.05 }
+      }
+      className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+export default function ContactSection() {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <section
+      id="contact"
+      className="relative isolate w-full overflow-hidden bg-[#f5f4f0] text-[#111111]"
+    >
+      {/* Background texture */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-[20%] top-[30%] h-[35vw] w-[35vw] rounded-full bg-white/[0.025] blur-[150px]"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.045]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+          maskImage:
+            "linear-gradient(to bottom, transparent, black 25%, black 75%, transparent)",
+        }}
       />
 
-      <div
+      {/* Animated background glow */}
+      <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[-20%] right-[-10%] h-[45vw] w-[45vw] rounded-full bg-white/[0.025] blur-[170px]"
+        className="pointer-events-none absolute -right-40 top-20 -z-10 h-[450px] w-[450px] rounded-full bg-[#d9d8d0]/50 blur-[120px] md:h-[600px] md:w-[600px]"
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                x: [0, -35, 0],
+                y: [0, 30, 0],
+                scale: [1, 1.08, 1],
+              }
+        }
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       />
 
-      <div
-        aria-hidden="true"
-        className="contact-background-m pointer-events-none absolute right-[-5vw] top-[8%] select-none text-[48vw] font-light leading-none tracking-[-0.15em] text-white/[0.025] will-change-transform"
-      >
-        M
+      {/* Top navigation */}
+      <div className="mx-auto w-full max-w-[1800px] px-6 pt-7 sm:px-10 lg:px-[7vw] lg:pt-10">
+        <motion.div
+          initial={
+            reduceMotion ? false : { opacity: 0, y: -15 }
+          }
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: EASE }}
+          className="flex items-center justify-between border-b border-black/15 pb-5"
+        >
+          <a
+            href="/"
+            className="group inline-flex items-center gap-1.5 text-xl font-black tracking-[-0.09em] sm:text-2xl"
+          >
+            METRIUS
+            <Asterisk
+              size={19}
+              strokeWidth={2.5}
+              className="transition-transform duration-500 group-hover:rotate-90"
+            />
+          </a>
+
+          <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-black/45 sm:gap-4 sm:text-[10px]">
+            <span className="hidden sm:inline">
+              Independent Digital Studio
+            </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-black" />
+            <span>Contact / 04</span>
+          </div>
+        </motion.div>
       </div>
 
-      <div
-        aria-hidden="true"
-        className="contact-orbit pointer-events-none absolute right-[-12vw] top-1/2 h-[48vw] w-[48vw] -translate-y-1/2 opacity-70"
-      >
-        <div className="absolute left-1/2 top-1/2 h-[34%] w-[34%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/[0.035] blur-[50px]" />
+      {/* Contact details */}
+      <div className="mx-auto w-full max-w-[1800px] px-6 py-20 sm:px-10 sm:py-28 lg:px-[7vw] lg:py-36">
+        <div className="mb-8 flex items-center gap-4 sm:mb-10">
+          <motion.span
+            initial={
+              reduceMotion ? false : { scaleX: 0 }
+            }
+            animate={{ scaleX: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.15,
+              ease: EASE,
+            }}
+            className="h-px w-10 origin-left bg-black/50 sm:w-16"
+          />
 
-        <div className="contact-orbit-ring-1 absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.09]">
-          <span className="contact-orbit-dot absolute left-[18%] top-[8%] h-[5px] w-[5px] rounded-full bg-white shadow-[0_0_18px_rgba(255,255,255,0.8)]" />
+          <motion.p
+            initial={
+              reduceMotion ? false : { opacity: 0, y: 12 }
+            }
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.7,
+              delay: 0.2,
+              ease: EASE,
+            }}
+            className="text-[9px] uppercase tracking-[0.3em] text-black/50 sm:text-[10px]"
+          >
+            CONTACT / METRIUS
+          </motion.p>
         </div>
 
-        <div className="contact-orbit-ring-2 absolute left-1/2 top-1/2 h-[65%] w-full -translate-x-1/2 -translate-y-1/2 rotate-[28deg] rounded-[50%] border border-white/[0.07]" />
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+          {/* Email block */}
+          <div>
+            <Reveal>
+              <div className="mb-8 flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15">
+                  <Mail size={15} strokeWidth={1.5} />
+                </span>
 
-        <div className="absolute left-1/2 top-1/2 h-full w-[58%] -translate-x-1/2 -translate-y-1/2 rotate-[-25deg] rounded-[50%] border border-white/[0.05]" />
-
-        <div className="contact-core absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-white/[0.10] shadow-[0_0_40px_rgba(255,255,255,0.18)] backdrop-blur-md">
-          <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,1)]" />
-        </div>
-      </div>
-
-      <div className="absolute left-[5vw] right-[5vw] top-8 z-30 flex items-center justify-between border-b border-white/10 pb-5">
-        <span className="text-[9px] uppercase tracking-[0.3em] text-white/35">
-          METRIUS
-        </span>
-        <span className="text-[9px] uppercase tracking-[0.3em] text-white/35">
-          CONTACT
-        </span>
-      </div>
-
-      <div className="relative z-20 flex min-h-screen w-full items-center px-[7vw] py-40">
-        <div className="w-full">
-          <div className="contact-kicker mb-10 flex items-center gap-6 text-[10px] uppercase tracking-[0.3em] text-white/40">
-            <span>04 / 04</span>
-            <span className="h-px w-12 bg-white/20" />
-            <span>LET&apos;S BUILD</span>
-          </div>
-
-          <div className="max-w-[1250px]">
-            <h2 className="overflow-hidden text-[clamp(4.5rem,10vw,11rem)] font-light uppercase leading-[0.78] tracking-[-0.08em]">
-              <span className="contact-title-line block">LET&apos;S</span>
-              <span className="contact-title-line block text-white/45">
-                BUILD
-              </span>
-              <span className="contact-title-line block">SOMETHING.</span>
-            </h2>
-          </div>
-
-          <div className="mt-16 grid max-w-[1100px] grid-cols-1 gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
-              <p className="contact-copy max-w-[520px] text-[16px] leading-[1.8] text-white/45 md:text-[18px]">
-                Have an idea, a product or a problem worth solving? Let&apos;s
-                turn it into something people remember.
-              </p>
-
-              <div className="contact-copy mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[10px] uppercase tracking-[0.2em] text-white/30">
-                <span>AI</span>
-                <span>SOFTWARE</span>
-                <span>SYSTEMS</span>
-                <span>PRODUCTS</span>
+                <span className="text-[10px] uppercase tracking-[0.22em] text-black/45">
+                  01 / Get in touch
+                </span>
               </div>
-            </div>
+            </Reveal>
 
-            <a
-              href="mailto:hello@metrius.com"
-              className="contact-action group relative flex h-[76px] w-full max-w-[390px] items-center justify-between overflow-hidden rounded-[18px] border border-white/20 bg-white/[0.07] px-6 text-[12px] font-medium uppercase tracking-[0.12em] text-white shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all duration-500 hover:border-white/40 hover:bg-white/[0.12]"
-            >
-              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[0.10] to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+            <Reveal delay={0.1}>
+              <h2 className="max-w-[500px] text-sm leading-[1.8] text-black/55 sm:text-base">
+                Have a project in mind? Tell us what you&apos;re
+                working on. We&apos;d love to hear about it and
+                explore how we can build something meaningful
+                together.
+              </h2>
+            </Reveal>
 
-              <span className="relative z-10">START A CONVERSATION</span>
-
-              <span className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/[0.06] text-lg transition-all duration-500 group-hover:bg-white group-hover:text-black">
-                ↗
-              </span>
-            </a>
-          </div>
-
-          <div className="contact-line mt-20 h-px w-full bg-white/15" />
-
-          <div className="mt-7 grid grid-cols-1 gap-6 text-[9px] uppercase tracking-[0.25em] text-white/30 md:grid-cols-3">
-            <div className="contact-meta-item">
-              <span className="block text-white/20">EMAIL</span>
+            <div className="mt-8 overflow-hidden">
               <a
-                href="mailto:hello@metrius.com"
-                className="mt-2 block text-white/55 transition-colors hover:text-white"
+                href="mailto:business@metrius.com"
+                className="group inline-flex max-w-full items-center gap-3 break-all text-[clamp(1.5rem,4vw,3.2rem)] font-semibold uppercase leading-none tracking-[-0.075em]"
               >
-                HELLO@METRIUS.COM
+                <AnimatedText text="BUSSINESS@METRIUS.COM" />
+
+                <ArrowUpRight
+                  size={25}
+                  strokeWidth={1.5}
+                  className="hidden shrink-0 transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1 sm:block"
+                />
               </a>
             </div>
 
-            <div className="contact-meta-item">
-              <span className="block text-white/20">STUDIO</span>
-              <span className="mt-2 block text-white/55">
-                DIGITAL SYSTEMS
-              </span>
-            </div>
+            <Reveal delay={0.2} className="mt-9">
+              <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-black/35">
+                <span className="h-px w-10 bg-black/20" />
+                <span>We&apos;re listening</span>
+              </div>
+            </Reveal>
+          </div>
 
-            <div className="contact-meta-item md:text-right">
-              <span className="block text-white/20">NEXT</span>
-              <span className="mt-2 block text-white/55">
-                BUILD SOMETHING MEANINGFUL
-              </span>
-            </div>
+          {/* Other contact options */}
+          <div className="flex flex-col gap-12 sm:gap-14">
+            {/* NEW PROJECTS */}
+            <Reveal>
+              <div className="mb-5 flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15">
+                  <ArrowUpRight
+                    size={15}
+                    strokeWidth={1.5}
+                  />
+                </span>
+
+                <span className="text-[10px] uppercase tracking-[0.22em] text-black/45">
+                  02 / New projects
+                </span>
+              </div>
+
+              <h3 className="text-2xl font-bold uppercase tracking-[-0.06em] sm:text-3xl">
+                Have an idea?
+              </h3>
+
+              <p className="mt-3 max-w-[390px] text-sm leading-[1.8] text-black/55 sm:text-base">
+                From AI-powered applications to thoughtful
+                digital experiences, let&apos;s build something
+                with purpose.
+              </p>
+
+              <div className="mt-6">
+                <MagneticButton href="mailto:bussiness@metrius.com">
+                  Discuss your project
+                </MagneticButton>
+              </div>
+            </Reveal>
+
+            {/* COLLABORATION */}
+            <Reveal delay={0.15}>
+              <div className="mb-5 flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15">
+                  <Globe size={15} strokeWidth={1.5} />
+                </span>
+
+                <span className="text-[10px] uppercase tracking-[0.22em] text-black/45">
+                  03 / Collaborate
+                </span>
+              </div>
+
+              <h3 className="text-2xl font-bold uppercase tracking-[-0.06em] sm:text-3xl">
+                Let&apos;s connect.
+              </h3>
+
+              <p className="mt-3 max-w-[390px] text-sm leading-[1.8] text-black/55 sm:text-base">
+                Interested in working together, exploring a
+                partnership, or exchanging ideas? Get in touch.
+              </p>
+
+              <div className="mt-6">
+                <MagneticButton
+                  href="mailto:hello@metrius.com?subject=Collaboration%20with%20Metrius"
+                  secondary
+                >
+                  Explore collaboration
+                </MagneticButton>
+              </div>
+            </Reveal>
           </div>
         </div>
       </div>
+
+      {/* Closing statement */}
+      <footer className="relative overflow-hidden bg-[#111111] text-[#f5f4f0]">
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 top-[-30%] h-[500px] w-[500px] rounded-full border border-white/[0.07] sm:h-[700px] sm:w-[700px]"
+          animate={
+            reduceMotion ? undefined : { rotate: 360 }
+          }
+          transition={{
+            duration: 80,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <div className="absolute left-[18%] top-[8%] h-2 w-2 rounded-full bg-white/70" />
+        </motion.div>
+
+        <div className="mx-auto w-full max-w-[1800px] px-6 py-20 sm:px-10 sm:py-28 lg:px-[7vw] lg:py-36">
+          <Reveal>
+            <div className="mb-9 flex items-center gap-4 text-[9px] uppercase tracking-[0.28em] text-white/40 sm:text-[10px]">
+              <span className="h-px w-10 bg-white/30" />
+              <span>
+                Good things start with a conversation
+              </span>
+            </div>
+          </Reveal>
+
+          <motion.h2
+            variants={lineContainer}
+            initial={reduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.35 }}
+            className="relative z-10 max-w-[1400px] text-[clamp(3.6rem,11.7vw,12rem)] font-black uppercase leading-[0.8] tracking-[-0.09em]"
+          >
+            <span className="block overflow-hidden pb-[0.08em]">
+              <motion.span
+                variants={lineVariant}
+                className="block"
+              >
+                LET&apos;S WORK
+              </motion.span>
+            </span>
+
+            <span className="block overflow-hidden pb-[0.08em]">
+              <motion.span
+                variants={lineVariant}
+                className="block text-white/35"
+              >
+                TOGETHER.
+              </motion.span>
+            </span>
+          </motion.h2>
+
+          <Reveal delay={0.1}>
+            <a
+              href="mailto:hello@metrius.com"
+              className="group mt-12 flex items-center gap-4 sm:mt-16 sm:gap-7"
+            >
+              <span className="shrink-0 text-xs text-white/55 sm:text-base">
+                Have a project in mind?
+              </span>
+
+              <span className="relative h-px flex-1 overflow-hidden bg-white/30">
+                <motion.span
+                  className="absolute inset-0 origin-left bg-white"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 1.2,
+                    delay: 0.2,
+                    ease: EASE,
+                  }}
+                />
+              </span>
+
+              <span className="flex shrink-0 items-center gap-2 text-xs transition-colors duration-300 group-hover:text-white/60 sm:text-base">
+                Say hello
+                <ArrowRight
+                  size={17}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </span>
+            </a>
+          </Reveal>
+
+          {/* Footer bottom */}
+          <div className="mt-20 flex flex-col justify-between gap-8 border-t border-white/15 pt-7 sm:mt-28 sm:flex-row sm:items-end">
+            <Reveal>
+              <a
+                href="/"
+                className="inline-flex items-center gap-2 text-2xl font-black tracking-[-0.09em]"
+              >
+                METRIUS
+                <Asterisk size={19} strokeWidth={2.5} />
+              </a>
+
+              <p className="mt-3 text-[9px] uppercase tracking-[0.2em] text-white/35">
+                AI · Software · Systems
+              </p>
+            </Reveal>
+
+            <div className="flex flex-wrap items-center gap-3">
+              {/* LinkedIn */}
+              <SocialLink
+                href="https://www.linkedin.com/"
+                label="LinkedIn"
+                index={0}
+              >
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V8.99h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.46v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V8.99h3.56v11.46ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.44c.98 0 1.79-.77 1.79-1.72V1.72C24 .77 23.19 0 22.21 0h.01Z" />
+                </svg>
+              </SocialLink>
+
+              {/* Discord */}
+              <SocialLink
+                href="https://discord.com/"
+                label="Discord"
+                index={1}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M19.73 5.05a19.2 19.2 0 0 0-4.76-1.48.07.07 0 0 0-.08.04c-.21.37-.44.85-.6 1.23a17.8 17.8 0 0 0-5.37 0c-.16-.39-.4-.86-.61-1.23a.08.08 0 0 0-.08-.04 19.1 19.1 0 0 0-4.76 1.48.07.07 0 0 0-.03.03C.42 9.52-.4 13.86.01 18.15c0 .02.01.04.03.05a19.4 19.4 0 0 0 5.83 2.96.08.08 0 0 0 .09-.03c.45-.62.85-1.27 1.2-1.96a.08.08 0 0 0-.04-.1 12.8 12.8 0 0 1-1.82-.87.08.08 0 0 1-.01-.13l.36-.28a.08.08 0 0 1 .08-.01c3.82 1.75 7.95 1.75 11.72 0a.08.08 0 0 1 .08.01l.36.28a.08.08 0 0 1-.01.13c-.58.34-1.18.63-1.82.87a.08.08 0 0 0-.04.1c.35.69.75 1.34 1.2 1.96a.08.08 0 0 0 .09.03 19.3 19.3 0 0 0 5.84-2.96.08.08 0 0 0 .03-.05c.49-4.96-.82-9.26-3.46-13.07a.06.06 0 0 0-.03-.03ZM8.02 14.86c-1.14 0-2.08-1.05-2.08-2.34 0-1.3.92-2.35 2.08-2.35 1.17 0 2.1 1.06 2.08 2.35 0 1.29-.92 2.34-2.08 2.34Zm7.96 0c-1.14 0-2.08-1.05-2.08-2.34 0-1.3.92-2.35 2.08-2.35 1.17 0 2.08 1.06 2.08 2.35 0 1.29-.91 2.34-2.08 2.34Z" />
+                </svg>
+              </SocialLink>
+
+              {/* Instagram */}
+              <SocialLink
+                href="https://www.instagram.com/"
+                label="Instagram"
+                index={2}
+              >
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
+                </svg>
+              </SocialLink>
+            </div>
+
+            <Reveal>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-white/35 sm:text-right">
+                © {new Date().getFullYear()} Metrius
+                <span className="mt-2 block">
+                  Built with intention.
+                </span>
+              </p>
+            </Reveal>
+          </div>
+
+          <motion.div
+            aria-hidden="true"
+            initial={
+              reduceMotion ? false : { scaleX: 0 }
+            }
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{
+              duration: 1.2,
+              ease: EASE,
+            }}
+            className="mt-10 h-px origin-left bg-gradient-to-r from-white/40 via-white/10 to-transparent"
+          />
+        </div>
+      </footer>
     </section>
   );
 }

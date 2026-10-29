@@ -1,682 +1,311 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { useCallback, type MouseEvent } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+
+const INTRO_DELAY = 10;
+
+const navigation = [
+  { label: "HOME", target: "home" },
+  { label: "ABOUT", target: "about" },
+  { label: "SERVICES", target: "services" },
+  { label: "CONTACT", target: "contact" },
+];
+
+const sectionIndicators = ["01", "02", "03", "04"];
 
 export default function HeroContent() {
+  const shouldReduceMotion = useReducedMotion() ?? false;
+
+  const handleSmoothScroll = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>, targetId: string) => {
+      event.preventDefault();
+
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: shouldReduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    },
+    [shouldReduceMotion]
+  );
+
+  const getTransition = (delay = 0) =>
+    shouldReduceMotion
+      ? { duration: 0 }
+      : {
+          duration: 0.9,
+          delay: INTRO_DELAY + delay,
+          ease: [0.22, 1, 0.36, 1] as const,
+        };
+
+  const revealVariants: Variants = {
+    hidden: shouldReduceMotion
+      ? { opacity: 1, y: 0 }
+      : { opacity: 0, y: 28 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : {
+            duration: 0.9,
+            ease: [0.22, 1, 0.36, 1],
+          },
+    },
+  };
+
+  const navVariants: Variants = {
+    hidden: { opacity: 0, y: -14 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : {
+            delay: INTRO_DELAY,
+            duration: 0.9,
+            ease: [0.22, 1, 0.36, 1],
+          },
+    },
+  };
+
+  const heroVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: shouldReduceMotion
+        ? { staggerChildren: 0 }
+        : {
+            delayChildren: INTRO_DELAY,
+            staggerChildren: 0.42,
+          },
+    },
+  };
+
+  const delayedFadeVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : {
+            delay: INTRO_DELAY + 2.8,
+            duration: 0.9,
+            ease: "easeOut",
+          },
+    },
+  };
+
   return (
     <>
-      {/* =====================================================
-          NAVBAR
-      ===================================================== */}
-
-      <nav
-        className="
-          hero-nav
-          absolute
-          left-0
-          top-0
-          z-30
-          flex
-          w-full
-          items-center
-          justify-between
-          px-[3vw]
-          py-8
-        "
+      {/* NAVIGATION */}
+      <motion.nav
+        initial="hidden"
+        animate="visible"
+        variants={navVariants}
+        className="hero-nav absolute inset-x-0 top-0 z-30 flex w-full items-center justify-between px-[4.5vw] py-7 md:py-8"
+        aria-label="Main navigation"
       >
-        {/* LOGO */}
-
-        <div
-          className="
-            text-[1.45rem]
-            font-medium
-            tracking-[0.28em]
-            text-white
-          "
+        <motion.a
+          variants={revealVariants}
+          href="#home"
+          onClick={(event) => handleSmoothScroll(event, "home")}
+          aria-label="Metrius home"
+          className="shrink-0 text-[1.1rem] font-medium tracking-[0.32em] text-white transition-opacity duration-300 hover:opacity-65 sm:text-[1.35rem]"
         >
           METRIUS
+        </motion.a>
+
+        <div className="hidden items-center gap-8 text-[10px] font-medium tracking-[0.22em] text-white/65 sm:gap-10 md:flex lg:gap-14">
+          {navigation.map((item, index) => (
+            <motion.a
+              key={item.target}
+              variants={revealVariants}
+              href={`#${item.target}`}
+              onClick={(event) =>
+                handleSmoothScroll(event, item.target)
+              }
+              className={`group relative py-2 transition-colors duration-300 hover:text-white ${
+                index === 0 ? "text-white" : ""
+              }`}
+            >
+              {item.label}
+
+              <span
+                className={`absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-white transition-opacity duration-300 ${
+                  index === 0
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                }`}
+              />
+            </motion.a>
+          ))}
         </div>
 
-        {/* NAVIGATION */}
-
-        <div
-          className="
-            hidden
-            items-center
-            gap-14
-            text-[0.85rem]
-            font-medium
-            tracking-[0.08em]
-            text-white
-            md:flex
-          "
+        {/* MOBILE NAVIGATION */}
+        <motion.a
+          variants={revealVariants}
+          href="#contact"
+          onClick={(event) => handleSmoothScroll(event, "contact")}
+          className="text-[9px] tracking-[0.2em] text-white/75 transition-colors hover:text-white md:hidden"
         >
-          <a
-            href="#home"
-            className="transition-opacity duration-300 hover:opacity-60"
-          >
-            HOME
-          </a>
+          CONTACT
+        </motion.a>
+      </motion.nav>
 
-          <a
-            href="#about"
-            className="transition-opacity duration-300 hover:opacity-60"
-          >
-            ABOUT
-          </a>
-
-          <a
-            href="#services"
-            className="transition-opacity duration-300 hover:opacity-60"
-          >
-            SERVICES
-          </a>
-
-          <a
-            href="#contact"
-            className="transition-opacity duration-300 hover:opacity-60"
-          >
-            CONTACT
-          </a>
-        </div>
-      </nav>
-
-
-      {/* =====================================================
-          HERO CONTENT
-      ===================================================== */}
-
-      <div
-        className="
-          flex
-          min-h-screen
-          w-full
-          items-start
-          px-[8.5vw]
-          pt-[27vh]
-          pb-24
-        "
+      {/* HERO CONTENT — ALL TEXT WAITS FOR THE INTRO */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={heroVariants}
+        className="relative z-10 flex min-h-screen w-full items-start px-[6.5vw] pb-28 pt-[27vh] sm:pt-[28vh] lg:pt-[29vh]"
       >
-        <div
-          className="
-            w-full
-            max-w-[650px]
-            text-white
-          "
-        >
+        <div className="w-full max-w-[760px] text-white">
+          {/* CATEGORY LABEL */}
+          <motion.div
+            variants={revealVariants}
+            className="mb-7 flex items-center gap-4 sm:mb-9"
+          >
+            <motion.span
+              initial={shouldReduceMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={getTransition(0.05)}
+              style={{ transformOrigin: "left" }}
+              className="h-px w-10 shrink-0 bg-white/90 sm:w-[60px]"
+            />
 
-          {/* =================================================
-              LINE
-          ================================================= */}
+            <span className="text-[8px] font-medium uppercase tracking-[0.3em] text-white/90 sm:text-[10px] sm:tracking-[0.34em]">
+              AI <span className="mx-1">·</span> SOFTWARE{" "}
+              <span className="mx-1">·</span> SYSTEMS
+            </span>
+          </motion.div>
 
-          <div
-            className="
-              hero-line
-              mb-8
-              h-[2px]
-              w-12
-              bg-white
-              shadow-[0_0_12px_rgba(255,255,255,0.35)]
-            "
-          />
-
-
-          {/* =================================================
-              TITLE
-          ================================================= */}
-
-          <h1
-            className="
-              hero-title
-              text-[clamp(4rem,7vw,7.5rem)]
-              font-light
-              leading-[0.85]
-              tracking-[-0.065em]
-              text-white
-              drop-shadow-[0_3px_20px_rgba(0,0,0,0.6)]
-            "
+          {/* FUTURISTIC METRIUS WORDMARK */}
+          <motion.h1
+            variants={revealVariants}
+            className="font-metrius text-[clamp(3rem,7vw,7.5rem)] font-medium leading-[0.95] tracking-[0.12em] text-white"
           >
             METRIUS
-          </h1>
+          </motion.h1>
 
-
-          {/* =================================================
-              TAGLINE
-          ================================================= */}
-
-          <h2
-            className="
-              hero-tagline
-              mt-10
-              max-w-[650px]
-              text-[clamp(2rem,3.3vw,3.7rem)]
-              font-light
-              leading-[0.95]
-              tracking-[-0.045em]
-              text-white
-              drop-shadow-[0_3px_18px_rgba(0,0,0,0.7)]
-            "
+          {/* BRAND SLOGAN */}
+          <motion.h2
+            variants={revealVariants}
+            className="mt-5 max-w-[720px] text-[clamp(2.2rem,4.15vw,4.5rem)] font-light uppercase leading-[0.94] tracking-[-0.045em] text-white sm:mt-6"
           >
-            Building Digital Products
+            Originality
             <br />
-            People Remember.
-          </h2>
+            Has No Source
+            <br />
+            Code.
+          </motion.h2>
 
-
-          {/* =================================================
-              DESCRIPTION
-          ================================================= */}
-
-          <p
-            className="
-              hero-description
-              mt-8
-              max-w-[500px]
-              text-[15px]
-              leading-[1.7]
-              tracking-[0.01em]
-              text-white/75
-              drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]
-              md:text-[17px]
-            "
+          {/* SUPPORTING STATEMENT */}
+          <motion.p
+            variants={revealVariants}
+            className="mt-5 max-w-[440px] text-[12px] font-light leading-relaxed tracking-[0.07em] text-white/65 sm:mt-6 sm:text-[15px] md:text-[17px]"
           >
-            We design, develop and scale premium websites,
-            applications and AI solutions for ambitious
-            businesses.
-          </p>
-
-
-          {/* =================================================
-              PREMIUM LIQUID GLASS BUTTONS
-          ================================================= */}
-
-          <div
-            className="
-              hero-actions
-              mt-10
-              flex
-              flex-wrap
-              gap-5
-            "
-          >
-
-            {/* =================================================
-                START A PROJECT
-            ================================================= */}
-
-            <a
-              href="#contact"
-              className="
-                group
-                relative
-                flex
-                h-[68px]
-                min-w-[290px]
-                items-center
-                justify-between
-                overflow-hidden
-                rounded-[18px]
-
-                border
-                border-white/[0.32]
-
-                bg-white/[0.72]
-
-                px-[10px]
-                pl-7
-
-                text-[13px]
-                font-medium
-                tracking-[0.07em]
-                text-black
-
-                shadow-[0_12px_45px_rgba(0,0,0,0.35)]
-
-                backdrop-blur-2xl
-
-                transition-all
-                duration-500
-                ease-out
-
-                hover:-translate-y-1
-                hover:border-white/[0.55]
-                hover:bg-white/[0.82]
-                hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]
-              "
-            >
-
-              {/* LIQUID GLASS */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-0
-                  rounded-[18px]
-                  bg-gradient-to-br
-                  from-white/[0.30]
-                  via-white/[0.08]
-                  to-black/[0.08]
-                "
-              />
-
-              {/* TOP REFLECTION */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  left-[8%]
-                  right-[8%]
-                  top-0
-                  h-px
-                  bg-white/[0.75]
-                  blur-[0.5px]
-                "
-              />
-
-              {/* INNER BORDER */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-[1px]
-                  rounded-[17px]
-                  border
-                  border-white/[0.12]
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-12px_25px_rgba(0,0,0,0.08)]
-                "
-              />
-
-              {/* LIQUID REFLECTION */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  -left-[35%]
-                  top-[-100%]
-                  h-[300%]
-                  w-[35%]
-                  rotate-[18deg]
-                  bg-gradient-to-r
-                  from-transparent
-                  via-white/[0.38]
-                  to-transparent
-                  blur-[8px]
-                  transition-all
-                  duration-1000
-                  ease-out
-                  group-hover:left-[120%]
-                "
-              />
-
-              {/* TEXT */}
-
-              <span
-                className="
-                  relative
-                  z-10
-                  whitespace-nowrap
-                  transition-transform
-                  duration-500
-                  group-hover:translate-x-[2px]
-                "
-              >
-                START A PROJECT
-              </span>
-
-
-              {/* =================================================
-                  ARROW GLASS
-              ================================================= */}
-
-              <span
-                className="
-                  relative
-                  z-10
-                  flex
-                  h-[48px]
-                  w-[48px]
-                  shrink-0
-                  items-center
-                  justify-center
-                  overflow-hidden
-                  rounded-[13px]
-
-                  border
-                  border-black/[0.13]
-
-                  bg-black/[0.055]
-
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-8px_15px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.08)]
-
-                  backdrop-blur-xl
-
-                  transition-all
-                  duration-500
-
-                  group-hover:bg-black/[0.09]
-                  group-hover:border-black/[0.20]
-                  group-hover:scale-[1.04]
-                "
-              >
-
-                {/* REFLECTION */}
-
-                <span
-                  className="
-                    pointer-events-none
-                    absolute
-                    inset-x-2
-                    top-0
-                    h-px
-                    bg-white/[0.65]
-                  "
-                />
-
-                {/* REAL ICON */}
-
-                <ArrowUpRight
-                  size={19}
-                  strokeWidth={1.8}
-                  className="
-                    relative
-                    z-10
-                    transition-transform
-                    duration-500
-                    ease-out
-                    group-hover:translate-x-[2px]
-                    group-hover:-translate-y-[2px]
-                  "
-                />
-              </span>
-            </a>
-
-
-            {/* =================================================
-                OUR WORK
-            ================================================= */}
-
-            <a
-              href="#work"
-              className="
-                group
-                relative
-                flex
-                h-[68px]
-                min-w-[240px]
-                items-center
-                justify-between
-                overflow-hidden
-                rounded-[18px]
-
-                border
-                border-white/[0.26]
-
-                bg-black/[0.38]
-
-                px-[10px]
-                pl-7
-
-                text-[13px]
-                font-medium
-                tracking-[0.07em]
-                text-white
-
-                shadow-[0_12px_45px_rgba(0,0,0,0.35)]
-
-                backdrop-blur-2xl
-
-                transition-all
-                duration-500
-                ease-out
-
-                hover:-translate-y-1
-                hover:border-white/[0.48]
-                hover:bg-black/[0.48]
-                hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]
-              "
-            >
-
-              {/* DARK LIQUID GLASS */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-0
-                  rounded-[18px]
-                  bg-gradient-to-br
-                  from-white/[0.12]
-                  via-white/[0.035]
-                  to-black/[0.18]
-                "
-              />
-
-              {/* TOP REFLECTION */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  left-[8%]
-                  right-[8%]
-                  top-0
-                  h-px
-                  bg-white/[0.50]
-                "
-              />
-
-              {/* INNER BORDER */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  inset-[1px]
-                  rounded-[17px]
-                  border
-                  border-white/[0.08]
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-12px_25px_rgba(0,0,0,0.18)]
-                "
-              />
-
-              {/* LIQUID REFLECTION */}
-
-              <span
-                className="
-                  pointer-events-none
-                  absolute
-                  -left-[35%]
-                  top-[-100%]
-                  h-[300%]
-                  w-[35%]
-                  rotate-[18deg]
-                  bg-gradient-to-r
-                  from-transparent
-                  via-white/[0.18]
-                  to-transparent
-                  blur-[8px]
-                  transition-all
-                  duration-1000
-                  ease-out
-                  group-hover:left-[120%]
-                "
-              />
-
-              {/* TEXT */}
-
-              <span
-                className="
-                  relative
-                  z-10
-                  whitespace-nowrap
-                  text-white/[0.92]
-                  transition-transform
-                  duration-500
-                  group-hover:translate-x-[2px]
-                "
-              >
-                OUR WORK
-              </span>
-
-
-              {/* =================================================
-                  ARROW GLASS
-              ================================================= */}
-
-              <span
-                className="
-                  relative
-                  z-10
-                  flex
-                  h-[48px]
-                  w-[48px]
-                  shrink-0
-                  items-center
-                  justify-center
-                  overflow-hidden
-                  rounded-[13px]
-
-                  border
-                  border-white/[0.18]
-
-                  bg-white/[0.075]
-
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.25),inset_0_-8px_15px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.16)]
-
-                  backdrop-blur-xl
-
-                  transition-all
-                  duration-500
-
-                  group-hover:bg-white/[0.13]
-                  group-hover:border-white/[0.32]
-                  group-hover:scale-[1.04]
-                "
-              >
-
-                {/* REFLECTION */}
-
-                <span
-                  className="
-                    pointer-events-none
-                    absolute
-                    inset-x-2
-                    top-0
-                    h-px
-                    bg-white/[0.50]
-                  "
-                />
-
-                {/* REAL ICON */}
-
-                <ArrowUpRight
-                  size={19}
-                  strokeWidth={1.8}
-                  className="
-                    relative
-                    z-10
-                    text-white
-                    transition-transform
-                    duration-500
-                    ease-out
-                    group-hover:translate-x-[2px]
-                    group-hover:-translate-y-[2px]
-                  "
-                />
-              </span>
-            </a>
-
-          </div>
+            Tools can be replicated. Vision cannot.
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
-
-      {/* =====================================================
-          SCENE INFO BOX
-          BOTTOM RIGHT
-      ===================================================== */}
-
-      <div
-        className="
-          pointer-events-none
-          absolute
-          bottom-5
-          right-[1vw]
-          z-40
-          flex
-          items-stretch
-          gap-4
-          rounded-[6px]
-          border
-          border-white/15
-          bg-black/35
-          px-4
-          py-3
-          text-white
-          backdrop-blur-md
-        "
+      {/* SCROLL INDICATOR — BOTTOM LEFT */}
+      <motion.a
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={getTransition(2.8)}
+        href="#about"
+        onClick={(event) => handleSmoothScroll(event, "about")}
+        className="absolute bottom-6 left-[5.1vw] z-20 flex items-center gap-5 text-white/60 transition-colors duration-300 hover:text-white sm:bottom-8"
+        aria-label="Scroll to explore"
       >
+        <span className="relative flex h-[54px] w-px items-center justify-center bg-white/35 sm:h-[68px]">
+          <motion.span
+            animate={
+              shouldReduceMotion
+                ? undefined
+                : { y: [0, 13, 0], opacity: [1, 0.45, 1] }
+            }
+            transition={
+              shouldReduceMotion
+                ? undefined
+                : {
+                    duration: 2.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }
+            }
+            className="absolute h-[5px] w-[5px] rounded-full bg-white"
+          />
+        </span>
 
-        {/* 01 / 04 */}
+        <span className="flex flex-col gap-1 text-[8px] font-medium uppercase tracking-[0.2em] sm:text-[9px]">
+          <span>Scroll</span>
+          <span>To Explore</span>
+        </span>
+      </motion.a>
 
-        <div
-          className="
-            flex
-            items-center
-            text-[10px]
-            font-medium
-            tracking-[0.18em]
-            text-white/55
-          "
-        >
-          01 / 04
+      {/* SECTION INDICATORS — RIGHT */}
+      <motion.div
+        initial={shouldReduceMotion ? false : { opacity: 0, x: 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={getTransition(3)}
+        className="absolute right-[3.3vw] top-1/2 z-20 hidden -translate-y-1/2 flex-col items-center md:flex"
+        aria-label="Page sections"
+      >
+        <div className="relative flex flex-col items-center gap-7">
+          <span className="absolute bottom-1 top-1 w-px bg-white/20" />
+
+          {sectionIndicators.map((number, index) => (
+            <motion.a
+              key={number}
+              initial={
+                shouldReduceMotion
+                  ? false
+                  : { opacity: 0, x: 6 }
+              }
+              animate={{ opacity: 1, x: 0 }}
+              transition={
+                shouldReduceMotion
+                  ? { duration: 0 }
+                  : {
+                      duration: 0.45,
+                      delay: INTRO_DELAY + 3.1 + index * 0.12,
+                      ease: "easeOut",
+                    }
+              }
+              href={`#${navigation[index]?.target ?? "home"}`}
+              onClick={(event) =>
+                handleSmoothScroll(
+                  event,
+                  navigation[index]?.target ?? "home"
+                )
+              }
+              aria-label={`Navigate to section ${number}`}
+              aria-current={index === 0 ? "page" : undefined}
+              className="group relative flex items-center gap-3 pl-3 text-[9px] tracking-[0.12em] transition-colors duration-300"
+            >
+              <span
+                className={`absolute left-0 h-1 w-1 rounded-full transition-all duration-300 ${
+                  index === 0
+                    ? "scale-100 bg-white shadow-[0_0_8px_rgba(255,255,255,0.7)]"
+                    : "scale-75 bg-white/30 group-hover:scale-100 group-hover:bg-white"
+                }`}
+              />
+
+              <span
+                className={
+                  index === 0
+                    ? "text-white"
+                    : "text-white/40 group-hover:text-white/80"
+                }
+              >
+                {number}
+              </span>
+            </motion.a>
+          ))}
         </div>
-
-
-        {/* DIVIDER */}
-
-        <div
-          className="w-px bg-white/20"
-        />
-
-
-        {/* LABEL */}
-
-        <div
-          className="
-            flex
-            flex-col
-            justify-center
-            gap-[2px]
-          "
-        >
-          <span
-            className="
-              text-[8px]
-              font-medium
-              tracking-[0.25em]
-              text-white/45
-            "
-          >
-            METRIUS
-          </span>
-
-          <span
-            className="
-              text-[10px]
-              font-medium
-              tracking-[0.16em]
-              text-white/80
-            "
-          >
-            DIGITAL SYSTEMS
-          </span>
-        </div>
-      </div>
+      </motion.div>
     </>
   );
 }
