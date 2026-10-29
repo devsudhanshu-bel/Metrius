@@ -428,7 +428,8 @@ export default function AppVisual2() {
           duration: reducedMotion ? 0.01 : 1.1,
           ease: EASE,
         }}
-        className="relative z-10 h-[min(72vh,570px)] min-h-[390px] max-h-[620px] w-auto max-w-full shrink-0 overflow-hidden rounded-[30px] border border-white bg-white text-neutral-950 shadow-[0_3px_5px_rgba(255,255,255,0.9),0_20px_42px_rgba(0,0,0,0.10),0_45px_85px_rgba(0,0,0,0.15)] [aspect-ratio:0.505] [transform-style:preserve-3d] [backface-visibility:hidden] sm:rounded-[36px]"
+
+className="relative z-10 h-auto w-[clamp(220px,25vw,282px)] max-w-[82vw] shrink-0 overflow-hidden rounded-[30px] border border-white bg-white text-neutral-950 shadow-[0_3px_5px_rgba(255,255,255,0.9),0_20px_42px_rgba(0,0,0,0.10),0_45px_85px_rgba(0,0,0,0.15)] [aspect-ratio:0.505] [transform-style:preserve-3d] [backface-visibility:hidden] will-change-transform transition-shadow duration-300 hover:shadow-[0_4px_8px_rgba(255,255,255,0.9),0_25px_48px_rgba(0,0,0,0.12),0_48px_90px_rgba(0,0,0,0.17)] sm:rounded-[36px]"
       >
         {/* Slide between storefront and product detail */}
 

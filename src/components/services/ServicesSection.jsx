@@ -55,7 +55,7 @@ function MobileVisualPair() {
       <div className="mobile-demo-one relative flex h-[400px] min-w-0 items-center justify-center sm:h-[480px] md:h-[min(68vh,650px)]">
         <div className="pointer-events-none absolute inset-[12%] rounded-full bg-neutral-200/70 blur-3xl" />
 
-        <div className="relative z-10 h-full w-full">
+        <div className="relative z-10 h-full w-full -translate-x-24 md:translate-x-0">
           <AppVisual />
         </div>
       </div>
@@ -64,7 +64,7 @@ function MobileVisualPair() {
       <div className="mobile-demo-two relative flex h-[400px] min-w-0 items-center justify-center sm:h-[480px] md:h-[min(68vh,650px)]">
         <div className="pointer-events-none absolute inset-[12%] rounded-full bg-neutral-200/70 blur-3xl" />
 
-        <div className="relative z-10 h-full w-full">
+        <div className="relative z-10 h-full w-full -translate-x-4 md:translate-x-0">
           <AppVisual2 />
         </div>
       </div>

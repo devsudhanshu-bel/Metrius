@@ -189,43 +189,10 @@ export default function TermsOfUse() {
         <Link
           href="/"
           aria-label="Metrius home"
-          className="text-[13px] font-semibold tracking-[-0.04em]"
+          className="text-[30px] font-semibold tracking-[-0.04em]"
         >
-          METRIUS <sup className="text-[8px]">®</sup>
+          METRIUS <sup className="text-[8px]"></sup>
         </Link>
-
-        <nav
-          aria-label="Main navigation"
-          className="flex items-center gap-3 text-[9px] uppercase tracking-[0.05em] sm:gap-5 sm:text-[10px] md:gap-8"
-        >
-          <Link
-            href="/#work"
-            className="transition-opacity duration-300 hover:opacity-45"
-          >
-            Work
-          </Link>
-
-          <Link
-            href="/#services"
-            className="hidden transition-opacity duration-300 hover:opacity-45 sm:inline"
-          >
-            Services
-          </Link>
-
-          <Link
-            href="/#about"
-            className="transition-opacity duration-300 hover:opacity-45"
-          >
-            About
-          </Link>
-
-          <Link
-            href="/#contact"
-            className="transition-opacity duration-300 hover:opacity-45"
-          >
-            Contact
-          </Link>
-        </nav>
       </motion.header>
 
       {/* EDITORIAL META STRIP */}

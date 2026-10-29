@@ -429,7 +429,9 @@ export default function AppVisual() {
         }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative z-10 h-full max-h-[560px] w-auto max-w-full shrink overflow-hidden rounded-[32px] border border-white bg-white text-neutral-950 shadow-[0_3px_5px_rgba(255,255,255,0.9),0_20px_42px_rgba(0,0,0,0.10),0_45px_85px_rgba(0,0,0,0.14)] [aspect-ratio:0.505] [transform-style:preserve-3d] [backface-visibility:hidden] will-change-transform transition-shadow duration-300 hover:shadow-[0_4px_8px_rgba(255,255,255,0.9),0_25px_48px_rgba(0,0,0,0.12),0_48px_90px_rgba(0,0,0,0.17)]"
+        
+className="relative z-10 h-auto max-h-[560px] w-[clamp(220px,25vw,282px)] max-w-[82vw] shrink-0 overflow-hidden rounded-[32px] border border-white bg-white text-neutral-950 shadow-[0_3px_5px_rgba(255,255,255,0.9),0_20px_42px_rgba(0,0,0,0.10),0_45px_85px_rgba(0,0,0,0.14)] [aspect-ratio:0.505] [transform-style:preserve-3d] [backface-visibility:hidden] will-change-transform transition-shadow duration-300 hover:shadow-[0_4px_8px_rgba(255,255,255,0.9),0_25px_48px_rgba(0,0,0,0.12),0_48px_90px_rgba(0,0,0,0.17)]"
+
       >
         {/* Both screens remain inside the same phone */}
         <motion.div
